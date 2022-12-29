@@ -1,0 +1,3 @@
+ipykernel
+jupyter_contrib_nbextensions
+torchvision
