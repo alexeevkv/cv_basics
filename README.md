@@ -1,0 +1,1 @@
+[Как подключить GPU collaba к локальной машине](https://medium.com/@thedatadetective/getting-local-with-google-colab-a4d69f373364#:~:text=Yes%2C%20Google%20Colab%20allows%20you,takes%20a%20few%20extra%20steps)
