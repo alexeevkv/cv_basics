@@ -1,2 +1,3 @@
-cv_venv
+venv
+.vscode
 .ipynb_checkpoints
