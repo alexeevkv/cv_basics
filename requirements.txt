@@ -1,4 +1,5 @@
 ipykernel
 jupyter_contrib_nbextensions
 torchvision
-jupyter_http_over_ws
+pandas
+click
