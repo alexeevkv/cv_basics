@@ -3,3 +3,7 @@ jupyter_contrib_nbextensions
 torchvision
 pandas
 click
+scikit-learn
+flake8
+seaborn
+matplotlib
