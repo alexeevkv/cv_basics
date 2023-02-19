@@ -12,7 +12,7 @@ STD = (0.2023, 0.1994, 0.2010)
 
 
 class CifarData(Dataset):
-    def __init__(self, images, targets, aug=None, transform=True):
+    def __init__(self, images, targets, aug=None, transform=None):
         self.images = images
         self.targets = targets
         self.aug = aug
@@ -26,12 +26,8 @@ class CifarData(Dataset):
             augmented = self.aug(image=image)
             image = augmented['image']
             
-        if self.transform:
-            transform = transforms.Compose([transforms.ColorJitter(),
-                                            transforms.RandomHorizontalFlip(p=0.3),
-                                            transforms.ToTensor(),
-                                            transforms.Normalize(MEAN, STD)])
-            image = transform(image)
+        if self.transform is not None:
+            image = self.transform(image)
             
         return {
             'image': image,
@@ -67,20 +63,37 @@ def data_split(train_batch_size, val_batch_size, test_batch_size, val_size=0.2, 
         )
 
     # train, val
-    train_dataset = CifarData(train_images, train_targets)
-    val_dataset = CifarData(val_images, val_targets)
+
+    train_transforms = transforms.Compose(
+        [
+            transforms.ColorJitter(),
+            transforms.RandomHorizontalFlip(p=0.3),
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD)
+        ]
+    )
+
+    train_dataset = CifarData(train_images, train_targets, transform=train_transforms)
+    val_dataset = CifarData(val_images, val_targets, transform=train_transforms)
 
     train_loader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True, num_workers=16)
     val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=16)
 
     # test 
-    test_dataset = CifarData(test_images, test_targets, transform=False)
+
+    test_transforms = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            #transforms.Normalize(MEAN, STD)
+        ]
+    )
+    test_dataset = CifarData(test_images, test_targets, transform=test_transforms)
     test_loader = DataLoader(test_dataset, batch_size=test_batch_size, shuffle=False, num_workers=16)
 
     datasets = {
         'train': train_dataset,
         'val': val_dataset,
-        'test': test_dataset,
+        'test': test_dataset
     } 
 
     data_loaders = {
