@@ -84,7 +84,7 @@ def data_split(train_batch_size, val_batch_size, test_batch_size, val_size=0.2, 
     test_transforms = transforms.Compose(
         [
             transforms.ToTensor(),
-            #transforms.Normalize(MEAN, STD)
+            transforms.Normalize(MEAN, STD)
         ]
     )
     test_dataset = CifarData(test_images, test_targets, transform=test_transforms)
