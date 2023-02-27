@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import accuracy_score, confusion_matrix
-    
+from train.tracker import NetTracker
+
 
 def tensors2numpy_array(tensors):
     temp = np.array([])
@@ -23,27 +24,7 @@ def plot_confusion_matrix(y_true, y_pred):
     plt.show()
 
 
-def plot_losses(train_losses, val_losses, ylim=10, model_name='VGG'):
-    epochs = [i for i in range(0, len(train_losses))]
-    nrow, ncol = 1, 1
-
-    size_one_fig = 9
-
-    fig, ax = plt.subplots(nrow, ncol, figsize=(size_one_fig * ncol, size_one_fig * nrow))
-
-    ax.plot(epochs, train_losses)
-    ax.plot(epochs, val_losses)
-    ax.set_title('VGG')
-    ax.legend(['train_loss', 'val_loss'])
-    ax.set_xlabel('epoch')
-    ax.set_ylabel('loss')
-    ax.grid()
-    ax.set_ylim((0, ylim))
-
-    plt.show()
-
-
-def evaluate_model(model, test_loader, train_losses, val_losses, model_name, device):
+def evaluate_model(model, tracker: NetTracker, test_loader, model_name, device):
     predictions = list()
 
     model.eval()
@@ -61,8 +42,8 @@ def evaluate_model(model, test_loader, train_losses, val_losses, model_name, dev
 
     print(f' Accuracy on test = {accuracy_score(y_true, y_pred)}')
 
-    plot_losses(train_losses, val_losses, model_name=model_name)
+    tracker.plot_training_process()
 
     plot_confusion_matrix(y_true, y_pred)
 
-    return y_true, y_pred
+    # return y_true, y_pred

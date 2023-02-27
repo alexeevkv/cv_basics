@@ -3,12 +3,15 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from torchvision.datasets import CIFAR10
 
-
 from sklearn.model_selection import train_test_split
 
+# Так как при использовании colorjitter, значение статистик действительно немного меняется, 
+# То используем просто 0.5 для MEAN и STD
 
-MEAN = (0.4914, 0.4822, 0.4465)
-STD = (0.2023, 0.1994, 0.2010)
+MEAN = (0.5, 0.5, 0.5)
+STD = (0.5, 0.5, 0.5)
+
+NUM_WORKERS = 4 
 
 
 class CifarData(Dataset):
@@ -45,7 +48,16 @@ def load_cifar_data(download=False):
     return train_data, test_data
 
 
-def data_split(train_batch_size, val_batch_size, test_batch_size, val_size=0.2, download=True, random_state=42):
+def data_split(
+    train_batch_size, 
+    val_batch_size, 
+    test_batch_size, 
+    train_transforms,
+    test_transforms,
+    val_size=0.2, 
+    download=True, 
+    random_state=42
+):
     train_data, test_data = load_cifar_data(download=download)
     
     train_images = [data[0] for data in train_data]
@@ -58,37 +70,20 @@ def data_split(train_batch_size, val_batch_size, test_batch_size, val_size=0.2, 
         train_test_split(
             train_images,
             train_targets,
-            test_size=0.2,
+            test_size=val_size,
             random_state=random_state
         )
 
     # train, val
-
-    train_transforms = transforms.Compose(
-        [
-            transforms.ColorJitter(),
-            transforms.RandomHorizontalFlip(p=0.3),
-            transforms.ToTensor(),
-            transforms.Normalize(MEAN, STD)
-        ]
-    )
-
     train_dataset = CifarData(train_images, train_targets, transform=train_transforms)
-    val_dataset = CifarData(val_images, val_targets, transform=train_transforms)
+    val_dataset = CifarData(val_images, val_targets, transform=test_transforms)
 
-    train_loader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True, num_workers=16)
-    val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=16)
+    train_loader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True, num_workers=NUM_WORKERS)
+    val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=NUM_WORKERS)
 
     # test 
-
-    test_transforms = transforms.Compose(
-        [
-            transforms.ToTensor(),
-            transforms.Normalize(MEAN, STD)
-        ]
-    )
     test_dataset = CifarData(test_images, test_targets, transform=test_transforms)
-    test_loader = DataLoader(test_dataset, batch_size=test_batch_size, shuffle=False, num_workers=16)
+    test_loader = DataLoader(test_dataset, batch_size=test_batch_size, shuffle=False, num_workers=NUM_WORKERS)
 
     datasets = {
         'train': train_dataset,
