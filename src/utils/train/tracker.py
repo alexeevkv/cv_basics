@@ -37,6 +37,13 @@ class NetTracker:
     def dump_model_state_dict(self, model_name):
         torch.save(self.state, f'{model_name}.ckpt')
 
+    def retrieve_model(self, model, device):
+        model.load_state_dict(self.state['model'])
+
+        start_epoch = self.state['epoch']
+
+        return model, start_epoch
+
     def plot_training_process(self):
         epochs = [i + self.starting_epoch for i in range(0, len(self.train_losses))]
 
