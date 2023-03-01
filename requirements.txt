@@ -8,3 +8,6 @@ flake8
 seaborn
 matplotlib
 scikit-image
+albumentations
+omegaconf
+hydra-core

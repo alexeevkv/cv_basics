@@ -1,0 +1,2 @@
+ToTensor:
+  _target_: torchvision.transforms.ToTensor
