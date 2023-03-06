@@ -1,0 +1,13 @@
+net:
+  _target_: src.models.resnet.ResNet18
+ #_partial_: True
+
+epochs: 50
+
+optimizer: 
+  _target_: torch.optim.Adam
+  _partial_: True
+  lr: 0.01
+  
+criterion:
+  _target_: torch.nn.CrossEntropyLoss
