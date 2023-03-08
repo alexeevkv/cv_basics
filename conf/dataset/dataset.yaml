@@ -1,6 +1,0 @@
-path2train: ./data/dataset/train.csv
-path2val: ./data/dataset/val.csv
-path2test: ./data/dataset/test.csv
-
-path2train_augm_conf: ./conf/augmentation/classification/train.yaml
-path2val_augm_conf: ./conf/augmentation/classification/test.yaml
