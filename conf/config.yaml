@@ -1,0 +1,14 @@
+task_type: classification
+
+defaults:
+  - dataset: ${task_type}
+  - augmentation: ${task_type}
+  - split: ${task_type}
+  - criterion: cross_entropy
+  - metrics: simple_classification
+  - model: resnet18_pretrained
+  - optimizer: adam
+  - scheduler: reduce_on_plateu
+  - dataloaders: train
+  - trainer: train
+  - logger: tensorboard_logger

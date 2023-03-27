@@ -1,5 +1,7 @@
 ipykernel
 jupyter_contrib_nbextensions
+torch
+torchmetrics
 torchvision
 pandas
 click
@@ -8,3 +10,8 @@ flake8
 seaborn
 matplotlib
 scikit-image
+pytorch-lightning==1.9
+omegaconf
+hydra-core
+albumentations
+mlflow

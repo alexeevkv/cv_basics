@@ -1,0 +1,27 @@
+train:
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.HorizontalFlip
+      p: 1
+    - _target_: albumentations.RandomBrightnessContrast
+      p: 1
+    - _target_: albumentations.augmentations.transforms.Normalize 
+
+    #- _target_: albumentations.pytorch.transforms.ToTensorV2
+  bbox_params:
+    _target_: albumentations.BboxParams
+    format: 'pascal_voc'
+    label_fields: 
+      - class_labels
+
+val:
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.augmentations.transforms.Normalize 
+
+    #- _target_: albumentations.pytorch.transforms.ToTensorV2
+  bbox_params:
+    _target_: albumentations.BboxParams
+    format: 'pascal_voc'
+    label_fields: 
+      - class_labels

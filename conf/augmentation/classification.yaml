@@ -1,0 +1,25 @@
+train:
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.augmentations.transforms.ChannelShuffle
+      p: 1
+    - _target_: albumentations.augmentations.transforms.CLAHE
+      p: 1
+    - _target_: albumentations.augmentations.transforms.ColorJitter
+      always_apply: True
+      p: 1 
+    - _target_: albumentations.augmentations.transforms.FancyPCA
+      alpha: 1
+      always_apply: True
+      p: 1
+    - _target_: albumentations.augmentations.transforms.GaussNoise
+      always_apply: True
+      p: 1
+    - _target_: albumentations.augmentations.transforms.Normalize 
+
+    #- _target_: albumentations.pytorch.transforms.ToTensorV2
+
+val: 
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.augmentations.transforms.Normalize

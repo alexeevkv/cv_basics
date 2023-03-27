@@ -1,0 +1,5 @@
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: True
+  min_lr: 1e-6
+  verbose: False

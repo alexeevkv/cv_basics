@@ -1,0 +1,4 @@
+split:
+  test_size: 20
+  val_size: 20
+  random_state: 42

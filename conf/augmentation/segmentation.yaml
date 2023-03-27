@@ -1,0 +1,19 @@
+train:
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.augmentations.geometric.resize.Resize
+      height: 640
+      width: 640
+    - _target_: albumentations.augmentations.transforms.Normalize 
+
+    #- _target_: albumentations.pytorch.transforms.ToTensorV2
+
+val:
+  _target_: albumentations.Compose
+  transforms:
+    - _target_: albumentations.augmentations.geometric.resize.Resize
+      height: 640
+      width: 640
+    - _target_: albumentations.augmentations.transforms.Normalize 
+
+    #- _target_: albumentations.pytorch.transforms.ToTensorV2
