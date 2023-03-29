@@ -1,5 +1,4 @@
 import torch
-from segmentation_models_pytorch.utils.losses import DiceLoss
 
 
 def weighted_binary_cross_entropy(output, target, weights=None):

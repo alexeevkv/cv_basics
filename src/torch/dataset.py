@@ -22,6 +22,7 @@ class CifarDataset(Dataset):
             image = self.transform(image)
         if self.augm is not None:
             image = self.augm(image=image)['image']
+            
         image = image.transpose(2, 0, 1).astype('float32')
 
         return image, target

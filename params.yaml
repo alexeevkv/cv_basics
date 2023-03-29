@@ -198,7 +198,7 @@ metrics:
 
 trainer:
   trainer_kwargs:
-    accelerator: gpu
+    accelerator: cpu
     devices: 1
     min_epochs: 300
     max_epochs: 400
