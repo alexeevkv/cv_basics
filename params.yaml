@@ -1,156 +1,23 @@
 dataset:
   cifar10:
-    train_batch_size: 1024
-    val_batch_size: 2048
-    test_batch_size: 1000
-    train_transforms: null
-    test_transforms: null
-    train_augm: null #${augmentation.train}
-    test_augm: ${augmentation.val}
+    train_batch_size: 2
+    val_batch_size: 2
+    test_batch_size: 2
+    train_transforms: ${transforms.train}
+    test_transforms: ${transforms.val}
+    train_augm: null
+    test_augm: null
     val_size: 0.2
     download: False 
     random_state: 42
-    num_workers: 4 
+    num_workers: 0
 
 transforms:
-  train:
-    _target_: torchvision.transforms.Compose
-    transforms:
-      - _target_: torchvision.transforms.Resize
-        size:
-          - 32
-          - 32
-      - _target_: torchvision.transforms.RandomGrayscale
-        p: 0.15
-      - _target_: torchvision.transforms.RandomResizedCrop
-        size: 32
-        scale:
-          - 0.75
-          - 1.0
-        ratio: 
-          - 1.0
-          - 1.0
-      - _target_: torchvision.transforms.RandomHorizontalFlip
-        p: 0.5
-      - _target_: torchvision.transforms.RandomRotation
-        degrees: 20
-      - _target_: torchvision.transforms.RandomAffine
-        degrees: 15
-        shear: 10
-        scale:
-          - 0.8
-          - 1.2
-      - _target_: torchvision.transforms.ColorJitter
-        brightness: 0.2
-        contrast: 0.2
-        saturation: 0.2
-      - _target_: torchvision.transforms.ToTensor
-        #transforms.RandomApply([GaussianNoise(0.0, 0.1)], p=0.25),
-        #torchvision.transforms.RandomApply([PepperNoise(amount=0.1)], p=0.8),
-      - _target_: torchvision.transforms.Normalize
-        mean:
-          - 0.5
-          - 0.5
-          - 0.5
-        std:
-          - 0.5
-          - 0.5
-          - 0.5
-  val:
-    _target_: torchvision.transforms.Compose
-    transforms:
-      - _target_: torchvision.transforms.Resize
-        size:
-          - 32
-          - 32
-      - _target_: torchvision.transforms.ToTensor
-      - _target_: torchvision.transforms.Normalize
-        mean:
-          - 0.5
-          - 0.5
-          - 0.5
-        std:
-          - 0.5
-          - 0.5
-          - 0.5
+  train: 
+    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+  val: 
+    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
 
-
-augmentation:
-  train:
-    _target_: albumentations.Compose
-    transforms:
-      - _target_: albumentations.OneOf
-        transforms:
-          - _target_: albumentations.RandomCrop
-            height: 24
-            width: 24
-            # scale:
-            #   - 0.75
-            #   - 1.0
-            # ratio:
-            #   - 1
-            #   - 1
-            p: 0.5
-          - _target_: albumentations.RandomCrop
-            height: 16
-            width: 16
-            # scale:
-            #   - 0.75
-            #   - 1.0
-            # ratio:
-            #   - 1
-            #   - 1
-            p: 0.5
-        p: 0.8 
-
-      - _target_: albumentations.augmentations.geometric.resize.Resize
-        height: 32
-        width: 32
-
-      - _target_: albumentations.OneOf
-        transforms:
-          - _target_: albumentations.CLAHE
-            p: 0.25
-          - _target_: albumentations.RandomBrightness
-            p: 0.25
-          - _target_: albumentations.RandomGamma
-            p: 0.25
-        p: 0.5
-
-      - _target_: albumentations.OneOf
-        transforms:
-          - _target_: albumentations.IAASharpen
-            p: 0.25
-          - _target_: albumentations.Blur
-            p: 0.25
-          - _target_: albumentations.MotionBlur
-            p: 0.25
-        p: 0.5
-
-      - _target_: albumentations.OneOf
-        transforms:
-          - _target_: albumentations.RandomContrast
-            p: 1
-          - _target_: albumentations.HueSaturationValue
-            p: 1
-        p: 0.5
-
-      - _target_: albumentations.OneOf
-        transforms:
-          - _target_: albumentations.HorizontalFlip
-            p: 1
-          - _target_: albumentations.VerticalFlip
-            p: 1
-        p: 0.5
-
-      - _target_: albumentations.augmentations.transforms.Normalize 
-  val:
-    _target_: albumentations.Compose
-    transforms:
-      - _target_: albumentations.augmentations.geometric.resize.Resize
-        height: 32
-        width: 32
-      - _target_: albumentations.augmentations.transforms.Normalize 
 criterion:
   criterion:
     _target_: torch.nn.CrossEntropyLoss

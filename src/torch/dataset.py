@@ -15,7 +15,7 @@ class CifarDataset(Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        image = np.asarray(self.images[index])
+        image = self.images[index]
         target = self.targets[index]
             
         if self.transform is not None:
@@ -23,7 +23,7 @@ class CifarDataset(Dataset):
         if self.augm is not None:
             image = self.augm(image=image)['image']
             
-        image = image.transpose(2, 0, 1).astype('float32')
+        #image = image.transpose(2, 0, 1).astype('float32')
 
         return image, target
     
