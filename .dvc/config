@@ -1,0 +1,6 @@
+[hydra]
+    enabled = True
+[core]
+    remote = storage
+['remote "storage"']
+    url = /storage2/kv.alekseev/dvc_storage

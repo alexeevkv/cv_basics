@@ -1,7 +1,21 @@
+# venv
 venv
+
+# vscode
 .vscode
+
+# python
 .ipynb_checkpoints
 __pycache__
+
+# models
 saved_models/
+
+# mlflow
 mlruns
+# pl
+
 lightning_logs
+
+# state dicts
+*.pt
