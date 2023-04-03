@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
 from torchvision.datasets import CIFAR10
 
 from sklearn.model_selection import train_test_split
@@ -21,9 +20,9 @@ class CifarDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         if self.augm is not None:
+            image = np.asarray(self.images[index])
             image = self.augm(image=image)['image']
-            
-        #image = image.transpose(2, 0, 1).astype('float32')
+            image = image.transpose(2, 0, 1).astype('float32')
 
         return image, target
     

@@ -18,7 +18,9 @@ def get_predicts(net, dataloader):
             x, y = batch
             y_pred.extend(to_np(net(to_cuda(x, cuda=True))))
             y_true.extend(to_np(y))
-    return np.vstack(y_true), np.vstack(y_pred)
+
+    y_true, y_pred = np.vstack(y_true), np.vstack(y_pred)
+    return y_true, np.argmax(y_pred, axis=1)
 
 
 def get_weights_and_grads(named_parameters):

@@ -2,8 +2,8 @@
 python main.py \
     --params params.yaml \
     --model_outpath resnet.pt \
-    --experiment_name lol \
-    --run_name chebuker \
+    --experiment_name resnet18 \
+    --run_name lr_scheduler_and_gradient_clipping_0_5_by_value\
     --resume_from_checkpoint False 
 '''
 from pathlib import Path
@@ -13,11 +13,13 @@ import mlflow
 
 from src.torch.utils import save_model_state, load_net
 from src.torch.dataset import data_split
+from src.torch.eval import get_predicts
 from src.config import prepare_config
 from src.torch.lightning import PLModelWrapper, get_trainer
 from src.visualize.plots import plot_confusion_matrix, plot_representations
 from src.visualize.utils import get_representations, get_pca, get_tsne
-from src.torch.eval import get_predicts
+from src.io import load_yaml
+from src.collections.models.resnet import ResNet18
 
 
 @click.command()
@@ -33,13 +35,16 @@ def train_model(
     run_name: str,
     resume_from_checkpoint: bool = False
 ) -> None:
+    device = load_yaml(params)['DEVICE']
+
     net_conf = prepare_config(params, config_key='model', resolve=True)
     trainer_conf = prepare_config(params, config_key='trainer', resolve=True)
     dataset_params = prepare_config('./params.yaml', config_key='dataset', resolve=True)['cifar10']
 
     train_dataloader, val_dataloader, test_dataloader = data_split(**dataset_params)
 
-    net = load_net(net_conf)
+    # net = load_net(net_conf)
+    net = ResNet18().to(device)
 
     optimizer = prepare_config(params, config_key='optimizer', resolve=True)['optimizer']
     optimizer = optimizer(net.parameters())
@@ -63,22 +68,22 @@ def train_model(
         trainer.fit(pl_net, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
         trainer.test(pl_net, test_dataloader)
 
-        net = pl_net.retrieve_torch_model()
+        net = pl_net.retrieve_torch_model().to(device)
         save_model_state(net, model_outpath)
 
         y_true, y_pred = get_predicts(net, test_dataloader)
 
         fig = plot_confusion_matrix(y_true, y_pred)
-        mlflow.log_figure(fig, f'otuputs/{experiment_name}/figures/{run_name}/confusion_matrix.png')
+        mlflow.log_figure(fig, 'confusion_matrix.png')
 
         outputs, labels = get_representations(net, test_dataloader)
         output_pca_data = get_pca(outputs)
         fig = plot_representations(output_pca_data, labels, title='pca')
-        mlflow.log_figure(fig, f'otuputs/{experiment_name}/figures/{run_name}/pca_representations.png')
+        mlflow.log_figure(fig, 'pca_representations.png')
 
         output_tsne_data = get_tsne(outputs)
         fig = plot_representations(output_tsne_data, labels, title='tsne')
-        mlflow.log_figure(fig, f'otuputs/{experiment_name}/figures/{run_name}/tsne_representations.png')
+        mlflow.log_figure(fig, 'tsne_representations.png')
 
 
 if __name__ == '__main__':

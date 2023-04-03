@@ -8,7 +8,7 @@ from src.torch.eval import compute_metrics
 
 
 class PLModelWrapper(pl.LightningModule):
-    def __init__(self, model, loss, optimizer, lr_scheduler, metrics2log=None, samples2track=None):
+    def __init__(self, model, loss, optimizer, lr_scheduler, metrics2log=None):
         super().__init__()
         self.model = model
         self.loss = loss
@@ -74,6 +74,8 @@ class PLModelWrapper(pl.LightningModule):
                     
             self.log('abs_avg_weight', float(to_np(torch.mean(weight_vec.abs()))))
             self.log('abs_avg_grad', float(to_np(torch.mean(grad_vec.abs()))))
+            self.log('max_grad', float(torch.max(grad_vec)))
+            self.log('min_grad', float(torch.min(grad_vec)))
 
     def test_step(self, test_batch, batch_idx):
         x, y = test_batch
@@ -90,7 +92,7 @@ class PLModelWrapper(pl.LightningModule):
     def test_epoch_end(self, outputs):
         avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
 
-        self.log("loss/val", avg_loss, on_epoch=True)
+        self.log("loss/test", avg_loss, on_epoch=True)
 
         for metric_name in self.metrics2log.keys():
             avg_metric_value = np.stack([x[metric_name] for x in outputs]).mean()
@@ -107,7 +109,7 @@ class PLModelWrapper(pl.LightningModule):
 
 def get_trainer(trainer_kwargs, resume_from_checkpoint=False):
     if resume_from_checkpoint:
-        trainer = pl.Trainer(resume_from_checkpoint='./model.ckpt')
+        trainer = pl.Trainer(**trainer_kwargs, resume_from_checkpoint='lightning_logs/version_66/checkpoints/epoch=90-step=30303.ckpt')
     else:
         trainer = pl.Trainer(**trainer_kwargs)
 

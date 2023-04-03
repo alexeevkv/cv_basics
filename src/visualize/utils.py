@@ -35,7 +35,7 @@ def get_representations(model, dataloader):
             outputs.extend(to_np(y_pred))
             labels.extend(to_np(y))
             
-    return np.concatenate(outputs), np.concatenate(labels)
+    return np.asarray(outputs), np.asarray(labels)
 
 
 def get_pca(data, n_components=2):

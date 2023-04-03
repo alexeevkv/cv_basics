@@ -1,22 +1,31 @@
+DEVICE: cuda
+GPU_NUM: 1
+
 dataset:
   cifar10:
-    train_batch_size: 2
-    val_batch_size: 2
-    test_batch_size: 2
+    train_batch_size: 128
+    val_batch_size: 256
+    test_batch_size: 500
     train_transforms: ${transforms.train}
     test_transforms: ${transforms.val}
-    train_augm: null
-    test_augm: null
-    val_size: 0.2
+    train_augm: null #${augmentations.train}
+    test_augm: null #${augmentations.val}
+    val_size: 0.15
     download: False 
     random_state: 42
-    num_workers: 0
+    num_workers: 32
 
 transforms:
   train: 
     _target_: src.collections.augmentations.torch_transforms.get_train_transforms
   val: 
     _target_: src.collections.augmentations.torch_transforms.get_val_transforms
+
+augmentations:
+  train: 
+    _target_: src.collections.augmentations.albumentations.get_train_transforms
+  val: 
+    _target_: src.collections.augmentations.albumentations.get_val_transforms
 
 criterion:
   criterion:
@@ -42,13 +51,6 @@ scheduler:
     gamma: 0.95
     #min_lr: 1e-6
     verbose: False
-dataloaders:
-  train_dataloader_kwargs:
-    batch_size: 5
-    num_workers: 32
-  val_dataloader_kwargs:
-    batch_size: 5
-    num_workers: 32
 
 metrics:
   accuracy_score:
@@ -65,12 +67,14 @@ metrics:
 
 trainer:
   trainer_kwargs:
-    accelerator: cpu
-    devices: 1
+    accelerator: ${DEVICE}
+    devices: ${GPU_NUM}
     min_epochs: 300
     max_epochs: 400
     check_val_every_n_epoch: 1
     enable_model_summary: True
+    gradient_clip_val: 0.5
+    gradient_clip_algorithm: value
 #     logger: ${logger.mlflow_logger}
 # logger:
 #   mlflow_logger:
