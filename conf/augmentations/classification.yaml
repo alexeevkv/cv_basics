@@ -1,0 +1,4 @@
+train: 
+  _target_: src.collections.augmentations.albumentations.get_train_transforms
+val: 
+  _target_: src.collections.augmentations.albumentations.get_val_transforms

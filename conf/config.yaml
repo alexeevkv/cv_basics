@@ -1,14 +1,15 @@
-task_type: classification
+DEVICE: cuda
+GPU_NUM: 1
+MODEL: ResNet18
+EXPERIMENT_NAME: DEBUG
+RUN_NAME: KEK
 
 defaults:
-  - dataset: ${task_type}
-  - augmentation: ${task_type}
-  - split: ${task_type}
+  - dataset: cifar10
+  - transforms: default_trans
+  - augmentations: null
   - criterion: cross_entropy
-  - metrics: simple_classification
-  - model: resnet18_pretrained
   - optimizer: adam
-  - scheduler: reduce_on_plateu
-  - dataloaders: train
+  - scheduler: exponential
+  - metrics: classification
   - trainer: train
-  - logger: tensorboard_logger

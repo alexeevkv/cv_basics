@@ -1,83 +1,60 @@
-DEVICE: cuda
-GPU_NUM: 1
-
 dataset:
-  cifar10:
-    train_batch_size: 128
-    val_batch_size: 256
-    test_batch_size: 500
-    train_transforms: ${transforms.train}
-    test_transforms: ${transforms.val}
-    train_augm: null #${augmentations.train}
-    test_augm: null #${augmentations.val}
-    val_size: 0.15
-    download: False 
-    random_state: 42
-    num_workers: 32
-
-transforms:
-  train: 
+  train_batch_size: 128
+  val_batch_size: 256
+  test_batch_size: 500
+  train_transforms:
     _target_: src.collections.augmentations.torch_transforms.get_train_transforms
-  val: 
+  test_transforms:
     _target_: src.collections.augmentations.torch_transforms.get_val_transforms
-
-augmentations:
-  train: 
-    _target_: src.collections.augmentations.albumentations.get_train_transforms
-  val: 
-    _target_: src.collections.augmentations.albumentations.get_val_transforms
-
+  train_augm: null
+  test_augm: null
+  val_size: 0.15
+  download: false
+  random_state: 42
+  num_workers: 32
+transforms:
+  train:
+    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+  val:
+    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
 criterion:
   criterion:
     _target_: torch.nn.CrossEntropyLoss
-   # _partial_: True
-model:
-  model_type: torch_models
-  net:
-    _target_: torchvision.models.resnet18
-    _partial_: True
-  weights: None
-  num_classes: 10
-
 optimizer:
   optimizer:
     _target_: torch.optim.Adam
-    _partial_: True
+    _partial_: true
     lr: 0.001
 scheduler:
   scheduler:
     _target_: torch.optim.lr_scheduler.ExponentialLR
-    _partial_: True
+    _partial_: true
     gamma: 0.95
-    #min_lr: 1e-6
-    verbose: False
-
+    verbose: false
 metrics:
   accuracy_score:
     _target_: sklearn.metrics.accuracy_score
-    _partial_: True
+    _partial_: true
   recall_score:
     _target_: sklearn.metrics.recall_score
-    _partial_: True
+    _partial_: true
     average: weighted
   precision_score:
     _target_: sklearn.metrics.precision_score
-    _partial_: True
+    _partial_: true
     average: weighted
-
 trainer:
   trainer_kwargs:
-    accelerator: ${DEVICE}
-    devices: ${GPU_NUM}
+    accelerator: cuda
+    devices: 1
     min_epochs: 300
     max_epochs: 400
     check_val_every_n_epoch: 1
-    enable_model_summary: True
+    enable_model_summary: true
     gradient_clip_val: 0.5
     gradient_clip_algorithm: value
-#     logger: ${logger.mlflow_logger}
-# logger:
-#   mlflow_logger:
-#     _target_: pytorch_lightning.loggers.MLFlowLogger
-#     experiment_name: mlflow_check
-#     tracking_uri: ./ml-runs
+DEVICE: cuda
+GPU_NUM: 1
+MODEL: ResNet18
+EXPERIMENT_NAME: DEBUG
+RUN_NAME: KEK

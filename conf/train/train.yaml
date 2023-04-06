@@ -1,6 +1,0 @@
-train_dataloader_kwargs:
-  batch_size: 128
-  num_workers: 32
-val_dataloader_kwargs:
-  batch_size: 128
-  num_workers: 32

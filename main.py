@@ -11,7 +11,7 @@ from pathlib import Path
 import click
 import mlflow
 
-from src.torch.utils import save_model_state, load_net
+from src.torch.utils import save_model_state
 from src.torch.dataset import data_split
 from src.torch.eval import get_predicts
 from src.config import prepare_config
@@ -19,7 +19,8 @@ from src.torch.lightning import PLModelWrapper, get_trainer
 from src.visualize.plots import plot_confusion_matrix, plot_representations
 from src.visualize.utils import get_representations, get_pca, get_tsne
 from src.io import load_yaml
-from src.collections.models.resnet import ResNet18
+from src.collections.models.resnet import ResNet18, ResNet50
+from src.collections.models.vgg import VGG19
 
 
 @click.command()
@@ -36,15 +37,21 @@ def train_model(
     resume_from_checkpoint: bool = False
 ) -> None:
     device = load_yaml(params)['DEVICE']
+    model_type = load_yaml(params)['MODEL']
 
-    net_conf = prepare_config(params, config_key='model', resolve=True)
     trainer_conf = prepare_config(params, config_key='trainer', resolve=True)
-    dataset_params = prepare_config('./params.yaml', config_key='dataset', resolve=True)['cifar10']
+    dataset_params = prepare_config('./params.yaml', config_key='dataset', resolve=True)
 
     train_dataloader, val_dataloader, test_dataloader = data_split(**dataset_params)
 
-    # net = load_net(net_conf)
-    net = ResNet18().to(device)
+    if model_type == 'ResNet18':
+        net = ResNet18().to(device)
+    elif model_type == 'ResNet50':
+        net = ResNet50().to(device)
+    elif model_type == 'VGG19':
+        net = VGG19().to(device)
+    else: 
+        raise ValueError(f"model type {model_type} is not defined correctly")
 
     optimizer = prepare_config(params, config_key='optimizer', resolve=True)['optimizer']
     optimizer = optimizer(net.parameters())

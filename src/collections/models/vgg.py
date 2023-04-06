@@ -55,3 +55,19 @@ class VGG(nn.Module):
             elif isinstance(m, nn.Linear):
                 m.weight.data.normal_(0, 0.01)
                 m.bias.data.zero_()
+
+
+def VGG11():
+    return VGG(cfg['VGG11'])
+
+
+def VGG13():
+    return VGG(cfg['VGG13'])
+
+
+def VGG16():
+    return VGG(cfg['VGG16'])
+
+
+def VGG19():
+    return VGG(cfg['VGG19'])

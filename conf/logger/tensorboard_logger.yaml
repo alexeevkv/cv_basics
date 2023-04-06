@@ -1,5 +1,0 @@
-tb_logger:
-  _target_: pytorch_lightning.loggers.TensorBoardLogger
-  save_dir: ./tensorboard
-  name: tensorboard_logger
-  version: test

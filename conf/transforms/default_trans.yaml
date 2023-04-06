@@ -1,0 +1,4 @@
+train: 
+  _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+val: 
+  _target_: src.collections.augmentations.torch_transforms.get_val_transforms

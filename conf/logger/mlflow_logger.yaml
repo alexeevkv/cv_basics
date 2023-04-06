@@ -1,4 +1,0 @@
-mlflow_logger:
-  _target_: pytorch_lightning.loggers.MLFlowLogger
-  experiment_name: mlflow_check
-  tracking_uri: ./ml-runs

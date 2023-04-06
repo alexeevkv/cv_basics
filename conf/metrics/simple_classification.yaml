@@ -1,9 +1,0 @@
-precision_score:
-  _target_: sklearn.metrics.precision_score
-  _partial_: True
-recall_score:
-  _target_: sklearn.metrics.recall_score
-  _partial_: True
-accuracy_score:
-  _target_: sklearn.metrics.accuracy_score
-  _partial_: True

@@ -1,14 +1,13 @@
-'''
-https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html#trainer-class-api
-Очень много возможностей для настройки (буквально всё что только можно)
-Рекомендуется подробно изучить и взять всё что необходимо для ваших задач.
-'''
+# https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html#trainer-class-api
+# Очень много возможностей для настройки (буквально всё что только можно)
+# Рекомендуется подробно изучить и взять всё что необходимо для ваших задач.
+
 trainer_kwargs:
-  enable_model_summary: True
-  min_epochs: 5
-  max_epochs: 25
+  accelerator: ${DEVICE}
+  devices: ${GPU_NUM}
+  min_epochs: 300
+  max_epochs: 400
   check_val_every_n_epoch: 1
-  devices: 1
-  default_root_dir: './'
-  # accelerator: gpu
-  # strategy: ddp
+  enable_model_summary: True
+  gradient_clip_val: 0.5
+  gradient_clip_algorithm: value
