@@ -45,7 +45,7 @@ metrics:
     average: weighted
 trainer:
   trainer_kwargs:
-    accelerator: cpu
+    accelerator: cuda
     devices: 1
     min_epochs: 300
     max_epochs: 400
@@ -53,8 +53,8 @@ trainer:
     enable_model_summary: true
     gradient_clip_val: 0.5
     gradient_clip_algorithm: value
-DEVICE: cpu
+DEVICE: cuda
 GPU_NUM: 1
-MODEL: ResNet50
+MODEL: ResNet18
 EXPERIMENT_NAME: GrokkingEffect
 RUN_NAME: ResNet50_no_augm

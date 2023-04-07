@@ -16,7 +16,6 @@ class PLModelWrapper(pl.LightningModule):
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
         self.metrics2log = metrics2log if metrics2log is not None else {}
-        self.val_metric_value = 1
 
     def training_step(self, train_batch, batch_idx):
         x, y = train_batch
@@ -55,10 +54,6 @@ class PLModelWrapper(pl.LightningModule):
 
         self.log("loss/val", avg_loss, on_epoch=True)
 
-        # it will be send into ReduceLROnPlateau scheduler
-    
-        self.val_metric_value = avg_loss
-
         for metric_name in self.metrics2log.keys():
             avg_metric_value = np.stack([x[metric_name] for x in outputs]).mean()
             self.log(f"{metric_name}/val", avg_metric_value, on_epoch=True)
@@ -85,7 +80,7 @@ class PLModelWrapper(pl.LightningModule):
 
             fig = plot_grad_flow(self.model.named_parameters())
             log_figure(fig, 'grad_flow.png', drop_local=True,
-                       to_mlflow=True, mlflow_path=f"grad_flow/{self.current_epoch}.png")
+                       to_mlflow=True, mlflow_path=f"grad_flow/epoch_{self.current_epoch}")
 
     def test_step(self, test_batch, batch_idx):
         x, y = test_batch
@@ -113,7 +108,7 @@ class PLModelWrapper(pl.LightningModule):
 
         lr_scheduler = {
             'scheduler': self.lr_scheduler,
-            'monitor': self.val_metric_value
+            'monitor': 'loss/val'
         }
         
         return [optimizer], [lr_scheduler]
