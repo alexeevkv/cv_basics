@@ -53,3 +53,12 @@ def get_val_transforms():
         transforms.Normalize(MEAN, STD),
     ]
     return transforms.Compose(trans)
+
+
+def get_resize_to_tensor():
+    trans = [
+        transforms.Resize((32, 32)),
+        transforms.ToTensor(),
+        transforms.Normalize(MEAN, STD),
+    ]
+    return transforms.Compose(trans)

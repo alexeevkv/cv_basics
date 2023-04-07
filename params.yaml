@@ -3,9 +3,9 @@ dataset:
   val_batch_size: 256
   test_batch_size: 500
   train_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   test_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   train_augm: null
   test_augm: null
   val_size: 0.15
@@ -14,9 +14,9 @@ dataset:
   num_workers: 32
 transforms:
   train:
-    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   val:
-    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
 criterion:
   criterion:
     _target_: torch.nn.CrossEntropyLoss
@@ -24,12 +24,12 @@ optimizer:
   optimizer:
     _target_: torch.optim.Adam
     _partial_: true
-    lr: 0.001
+    lr: 0.0002
 scheduler:
   scheduler:
-    _target_: torch.optim.lr_scheduler.ExponentialLR
+    _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
     _partial_: true
-    gamma: 0.95
+    min_lr: 1.0e-05
     verbose: false
 metrics:
   accuracy_score:
@@ -55,6 +55,6 @@ trainer:
     gradient_clip_algorithm: value
 DEVICE: cuda
 GPU_NUM: 1
-MODEL: ResNet18
-EXPERIMENT_NAME: DEBUG
-RUN_NAME: KEK
+MODEL: ResNet50
+EXPERIMENT_NAME: GrokkingEffect
+RUN_NAME: ResNet50_no_augm

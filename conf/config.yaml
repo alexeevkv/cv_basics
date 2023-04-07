@@ -1,15 +1,15 @@
 DEVICE: cuda
 GPU_NUM: 1
-MODEL: ResNet18
-EXPERIMENT_NAME: DEBUG
-RUN_NAME: KEK
+MODEL: ResNet50
+EXPERIMENT_NAME: GrokkingEffect
+RUN_NAME: ResNet50_no_augm
 
 defaults:
   - dataset: cifar10
-  - transforms: default_trans
+  - transforms: resize_to_tensor
   - augmentations: null
   - criterion: cross_entropy
   - optimizer: adam
-  - scheduler: exponential
+  - scheduler: reduce_on_plateu
   - metrics: classification
   - trainer: train

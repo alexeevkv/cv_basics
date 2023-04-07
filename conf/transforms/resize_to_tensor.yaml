@@ -1,0 +1,4 @@
+train: 
+  _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
+val: 
+  _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor

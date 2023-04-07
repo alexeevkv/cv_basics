@@ -1,9 +1,8 @@
 import torch
 import numpy as np
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import Callback
 
-from src.torch.utils import to_np, to_cuda
+from src.torch.utils import to_np
 from src.torch.eval import compute_metrics
 
 
@@ -15,6 +14,7 @@ class PLModelWrapper(pl.LightningModule):
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
         self.metrics2log = metrics2log if metrics2log is not None else {}
+        self.val_metric_value = 1
 
     def training_step(self, train_batch, batch_idx):
         x, y = train_batch
@@ -52,6 +52,10 @@ class PLModelWrapper(pl.LightningModule):
         avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
 
         self.log("loss/val", avg_loss, on_epoch=True)
+
+        # it will be send into ReduceLROnPlateau scheduler
+    
+        self.val_metric_value = avg_loss
 
         for metric_name in self.metrics2log.keys():
             avg_metric_value = np.stack([x[metric_name] for x in outputs]).mean()
@@ -100,7 +104,12 @@ class PLModelWrapper(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = self.optimizer
-        lr_scheduler = {'scheduler': self.lr_scheduler, 'name': 'expo_lr'}
+
+        lr_scheduler = {
+            'scheduler': self.lr_scheduler,
+            'monitor': self.val_metric_value
+        }
+        
         return [optimizer], [lr_scheduler]
     
     def retrieve_torch_model(self):
