@@ -2,8 +2,10 @@ import torch
 import numpy as np
 import pytorch_lightning as pl
 
+from src.io.log import log_figure
 from src.torch.utils import to_np
 from src.torch.eval import compute_metrics
+from src.visualize.plots import plot_grad_flow
 
 
 class PLModelWrapper(pl.LightningModule):
@@ -81,6 +83,10 @@ class PLModelWrapper(pl.LightningModule):
             self.log('max_grad', float(torch.max(grad_vec)))
             self.log('min_grad', float(torch.min(grad_vec)))
 
+            fig = plot_grad_flow(self.model.named_parameters())
+            log_figure(fig, 'grad_flow.png', drop_local=True,
+                       to_mlflow=True, mlflow_path=f"grad_flow/{self.current_epoch}.png")
+
     def test_step(self, test_batch, batch_idx):
         x, y = test_batch
         logits = self.model(x)
@@ -116,9 +122,9 @@ class PLModelWrapper(pl.LightningModule):
         return self.model
 
 
-def get_trainer(trainer_kwargs, resume_from_checkpoint=False):
-    if resume_from_checkpoint:
-        trainer = pl.Trainer(**trainer_kwargs, resume_from_checkpoint='lightning_logs/version_66/checkpoints/epoch=90-step=30303.ckpt')
+def get_trainer(trainer_kwargs, ckpt_path=None):
+    if ckpt_path is not None:
+        trainer = pl.Trainer(**trainer_kwargs, resume_from_checkpoint=ckpt_path)
     else:
         trainer = pl.Trainer(**trainer_kwargs)
 

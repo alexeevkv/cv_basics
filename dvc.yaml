@@ -4,7 +4,6 @@ stages:
                         --model_outpath models/${EXPERIMENT_NAME}.pt
                         --experiment_name ${EXPERIMENT_NAME}
                         --run_name ${RUN_NAME}
-                        --resume_from_checkpoint False
     deps: 
       - params.yaml
       - main.py

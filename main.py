@@ -1,10 +1,11 @@
 '''
+CLI example
+
 python main.py \
     --params params.yaml \
-    --model_outpath resnet.pt \
-    --experiment_name resnet18 \
-    --run_name lr_scheduler_and_gradient_clipping_0_5_by_value\
-    --resume_from_checkpoint False 
+    --model_outpath model.pt \
+    --experiment_name debug \
+    --run_name test_run
 '''
 from pathlib import Path
 
@@ -28,13 +29,13 @@ from src.collections.models.vgg import VGG19
 @click.option('--model_outpath', 'model_outpath')
 @click.option('--experiment_name', 'experiment_name')
 @click.option('--run_name', 'run_name')
-@click.option('--resume_from_checkpoint', 'resume_from_checkpoint', required=False, default=False, type=bool)
+@click.option('--ckpt_path', 'ckpt_path', required=False, default=None, type=Path)
 def train_model(
     params: Path,
     model_outpath: Path,
     experiment_name: str,
     run_name: str,
-    resume_from_checkpoint: bool = False
+    ckpt_path: Path = None
 ) -> None:
     device = load_yaml(params)['DEVICE']
     model_type = load_yaml(params)['MODEL']
@@ -67,7 +68,7 @@ def train_model(
         lr_scheduler=scheduler, 
         metrics2log=metrics
     )
-    trainer = get_trainer(trainer_conf['trainer_kwargs'], resume_from_checkpoint=resume_from_checkpoint)
+    trainer = get_trainer(trainer_conf['trainer_kwargs'], ckpt_path=ckpt_path)
 
     mlflow.set_experiment(experiment_name)
     mlflow.pytorch.autolog()

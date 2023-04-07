@@ -3,8 +3,6 @@ import numpy as np
 from tqdm import tqdm
 
 from .utils import to_np, to_cuda
-from ..visualize.plots import plot_confusion_matrix, plot_representations
-from ..visualize.utils import get_representations, get_pca, get_tsne
 
 
 def get_predicts(net, dataloader):
