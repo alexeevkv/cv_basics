@@ -5,9 +5,9 @@
 trainer_kwargs:
   accelerator: ${DEVICE}
   devices: ${GPU_NUM}
-  min_epochs: 300
-  max_epochs: 400
+  min_epochs: 1000
+  max_epochs: 1100
   check_val_every_n_epoch: 1
   enable_model_summary: True
-  gradient_clip_val: 0.5
-  gradient_clip_algorithm: value
+  # gradient_clip_val: 0.5
+  # gradient_clip_algorithm: value
