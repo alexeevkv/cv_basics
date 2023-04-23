@@ -70,5 +70,5 @@ def train_test_val_split(dataset, test_size, val_size, random_state, stratify_by
 def select_device(raw_config):
     device = raw_config['DEVICE']
     if device == 'cuda' and raw_config['GPU_NUM'] == 1 and 'DEVICE_NUM' in raw_config.keys():
-        os.environ['CUDA_VISIBLE_DEVICES'] = raw_config['DEVICE_NUM']
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(raw_config['DEVICE_NUM'])
     return device

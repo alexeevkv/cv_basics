@@ -1,12 +1,12 @@
 net:
   _target_: src.collections.models.vit.VisionTransformer
-  _partial_: False
-  embed_dim: 1
-  hidden_dim: 1
-  num_channels: 1
-  num_heads: 1
-  num_layers: 1
-  num_classes: 1
-  patch_size: 1
-  num_patches: 1
-  dropout: 1
+  _partial_: false
+  embed_dim: 256
+  hidden_dim: 512
+  num_heads: 8
+  num_layers: 6
+  patch_size: 4
+  num_channels: 3
+  num_patches: 64
+  num_classes: 10
+  dropout: 0.2
