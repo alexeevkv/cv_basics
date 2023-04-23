@@ -13,7 +13,7 @@ import click
 import mlflow
 
 from src.torch.utils import save_model_state, select_device
-from src.torch.dataset import data_split
+from src.torch.dataset import get_dataloaders
 from src.torch.eval import get_predicts
 from src.config import prepare_config
 from src.torch.lightning import PLModelWrapper, get_trainer
@@ -32,7 +32,6 @@ def train_model(
     model_outpath: Path,
     experiment_name: str,
     run_name: str,
-    ckpt_path: Path = None
 ) -> None:
     raw_conf = load_yaml(params)
     net_conf = prepare_config(params, config_key='model', resolve=True)
@@ -47,7 +46,7 @@ def train_model(
     ckpt_path = raw_conf['CKPT_PATH']
     net = net_conf['net'].to(device)
     trainer = get_trainer(trainer_conf['trainer_kwargs'], ckpt_path=ckpt_path)
-    train_dataloader, val_dataloader, test_dataloader = data_split(**dataset_conf)
+    train_dataloader, val_dataloader, test_dataloader = get_dataloaders(**dataset_conf)
     optimizer = optimizer_conf['optimizer'](net.parameters())
     criterion = criterion_conf['criterion']
     scheduler = scheduler_conf['scheduler'](optimizer)

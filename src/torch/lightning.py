@@ -9,9 +9,9 @@ from src.visualize.plots import plot_grad_flow
 
 
 class PLModelWrapper(pl.LightningModule):
-    def __init__(self, model, loss, optimizer, lr_scheduler, model_kwargs: dict = {}, metrics2log: dict = {}):
+    def __init__(self, model, loss, optimizer, lr_scheduler, metrics2log: dict = {}):
         super().__init__()
-        self.model = model(**model_kwargs)
+        self.model = model
         self.loss = loss
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler

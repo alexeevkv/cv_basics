@@ -34,10 +34,13 @@ def load_cifar_data(root='./data/CIFAR10', download=False):
     train_data = CIFAR10(root=root, train=True, download=download)
     test_data = CIFAR10(root=root, train=False, download=download)
 
-    return train_data, test_data, train_data.class_to_idx
+    classes2idx = train_data.class_to_idx
+    idx2classes = {v: k for (k, v) in classes2idx.items()}
+
+    return train_data, test_data, idx2classes
 
 
-def data_split(
+def get_dataloaders(
     train_batch_size, 
     val_batch_size, 
     test_batch_size, 
@@ -51,8 +54,7 @@ def data_split(
     random_state=42,
     num_workers=4
 ):
-    train_data, test_data, classes2idx = load_cifar_data(root, download=download)
-    idx2classes = {v: k for (k, v) in classes2idx.items()}
+    train_data, test_data, idx2classes = load_cifar_data(root, download=download)
     
     train_images = [data[0] for data in train_data]
     train_targets = [data[1] for data in train_data]
