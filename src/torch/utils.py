@@ -1,4 +1,4 @@
-import warnings
+import os
 
 import numpy as np
 import torch
@@ -67,38 +67,8 @@ def train_test_val_split(dataset, test_size, val_size, random_state, stratify_by
     return train, test, val
 
 
-def check_required_key(conf, key=''):
-    if key not in conf.keys():
-        raise ValueError(f"For {conf['model_type']} type it is absolutely necessary to specify {key}")
-
-
-def load_net(net_conf):
-    '''
-    Function is used for loading DL models. You can use in three scenarios:
-        1. you can use pretrained_models from torchvision.models or others but with similar api.
-            you can also pass weights, but if you dont want to, you should specify them to null in config
-        2. you can load model from pytorch state_dict 
-    '''
-    model_type = net_conf['model_type']
-
-    if model_type == 'trained_models':
-        check_required_key(net_conf, key='model_path')
-        check_required_key(net_conf, key='device')
-        return torch.load(net_conf['model_path'], map_location=torch.device(net_conf['device']))
-    
-    if model_type == 'state_dict_models':
-        check_required_key(net_conf, key='net')
-        check_required_key(net_conf, key='path2state_dict')
-        net = net_conf['net']
-        return load_model_state(net, net_conf['path2state_dict'])
-
-    if model_type == 'torch_models':
-        check_required_key(net_conf, key='net')
-        check_required_key(net_conf, key='num_classes')
-        if 'weights' not in net_conf.keys():
-            warnings.warn(f'You are using {model_type} type but have not specified weights to be None!')
-            weights = None
-        else:
-            weights = net_conf['weights']   
-
-        return net_conf['net'](pretrained=False, num_classes=net_conf['num_classes'])
+def select_device(raw_config):
+    device = raw_config['DEVICE']
+    if device == 'cuda' and raw_config['GPU_NUM'] == 1 and 'DEVICE_NUM' in raw_config.keys():
+        os.environ['CUDA_VISIBLE_DEVICES'] = raw_config['DEVICE_NUM']
+    return device

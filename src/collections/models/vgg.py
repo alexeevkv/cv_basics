@@ -58,16 +58,16 @@ class VGG(nn.Module):
 
 
 def VGG11():
-    return VGG(cfg['VGG11'])
+    return VGG('VGG11')
 
 
 def VGG13():
-    return VGG(cfg['VGG13'])
+    return VGG('VGG13')
 
 
 def VGG16():
-    return VGG(cfg['VGG16'])
+    return VGG('VGG16')
 
 
 def VGG19():
-    return VGG(cfg['VGG19'])
+    return VGG('VGG19')

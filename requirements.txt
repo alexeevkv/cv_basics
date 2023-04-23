@@ -1,6 +1,7 @@
 ipykernel
 jupyter_contrib_nbextensions
 torch
+tqdm
 torchmetrics
 torchvision
 pandas
@@ -15,4 +16,4 @@ omegaconf
 hydra-core
 albumentations
 mlflow
-dvc
+dvc>=2.3.1

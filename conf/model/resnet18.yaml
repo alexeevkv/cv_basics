@@ -1,0 +1,3 @@
+net:
+  _target_: src.collections.models.resnet.ResNet18
+  _partial_: False

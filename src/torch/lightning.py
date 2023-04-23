@@ -9,13 +9,13 @@ from src.visualize.plots import plot_grad_flow
 
 
 class PLModelWrapper(pl.LightningModule):
-    def __init__(self, model, loss, optimizer, lr_scheduler, metrics2log=None):
+    def __init__(self, model, loss, optimizer, lr_scheduler, model_kwargs: dict = {}, metrics2log: dict = {}):
         super().__init__()
-        self.model = model
+        self.model = model(**model_kwargs)
         self.loss = loss
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
-        self.metrics2log = metrics2log if metrics2log is not None else {}
+        self.metrics2log = metrics2log
 
     def training_step(self, train_batch, batch_idx):
         x, y = train_batch

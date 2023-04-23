@@ -1,6 +1,3 @@
-import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
-
 '''
 CLI example
 
@@ -15,7 +12,7 @@ from pathlib import Path
 import click
 import mlflow
 
-from src.torch.utils import save_model_state
+from src.torch.utils import save_model_state, select_device
 from src.torch.dataset import data_split
 from src.torch.eval import get_predicts
 from src.config import prepare_config
@@ -23,8 +20,6 @@ from src.torch.lightning import PLModelWrapper, get_trainer
 from src.visualize.plots import plot_confusion_matrix, plot_representations
 from src.visualize.utils import get_representations, get_pca, get_tsne
 from src.io import load_yaml
-from src.collections.models.resnet import ResNet18, ResNet50
-from src.collections.models.vgg import VGG19
 
 
 @click.command()
@@ -32,7 +27,6 @@ from src.collections.models.vgg import VGG19
 @click.option('--model_outpath', 'model_outpath')
 @click.option('--experiment_name', 'experiment_name')
 @click.option('--run_name', 'run_name')
-@click.option('--ckpt_path', 'ckpt_path', required=False, default=None, type=Path)
 def train_model(
     params: Path,
     model_outpath: Path,
@@ -40,38 +34,31 @@ def train_model(
     run_name: str,
     ckpt_path: Path = None
 ) -> None:
-    device = load_yaml(params)['DEVICE']
-    model_type = load_yaml(params)['MODEL']
-
+    raw_conf = load_yaml(params)
+    net_conf = prepare_config(params, config_key='model', resolve=True)
     trainer_conf = prepare_config(params, config_key='trainer', resolve=True)
-    dataset_params = prepare_config('./params.yaml', config_key='dataset', resolve=True)
+    dataset_conf = prepare_config(params, config_key='dataset', resolve=True)
+    optimizer_conf = prepare_config(params, config_key='optimizer', resolve=True)
+    criterion_conf = prepare_config(params, config_key='criterion', resolve=True)
+    scheduler_conf = prepare_config(params, config_key='scheduler', resolve=True)
+    metrics_conf = prepare_config(params, config_key='metrics', resolve=True)
 
-    train_dataloader, val_dataloader, test_dataloader = data_split(**dataset_params)
-
-    if model_type == 'ResNet18':
-        net = ResNet18().to(device)
-    elif model_type == 'ResNet50':
-        net = ResNet50().to(device)
-    elif model_type == 'VGG19':
-        net = VGG19().to(device)
-    else: 
-        raise ValueError(f"model type {model_type} is not defined correctly")
-
-    optimizer = prepare_config(params, config_key='optimizer', resolve=True)['optimizer']
-    optimizer = optimizer(net.parameters())
-    criterion = prepare_config(params, config_key='criterion', resolve=True)['criterion']
-    scheduler = prepare_config(params, config_key='scheduler', resolve=True)['scheduler']
-    scheduler = scheduler(optimizer)
-    metrics = prepare_config(params, config_key='metrics', resolve=True)
+    device = select_device(raw_conf)  # sets specific gpu if more than 1 is available
+    ckpt_path = raw_conf['CKPT_PATH']
+    net = net_conf['net'].to(device)
+    trainer = get_trainer(trainer_conf['trainer_kwargs'], ckpt_path=ckpt_path)
+    train_dataloader, val_dataloader, test_dataloader = data_split(**dataset_conf)
+    optimizer = optimizer_conf['optimizer'](net.parameters())
+    criterion = criterion_conf['criterion']
+    scheduler = scheduler_conf['scheduler'](optimizer)
 
     pl_net = PLModelWrapper(
         model=net, 
         loss=criterion, 
         optimizer=optimizer, 
         lr_scheduler=scheduler, 
-        metrics2log=metrics
+        metrics2log=metrics_conf
     )
-    trainer = get_trainer(trainer_conf['trainer_kwargs'], ckpt_path=ckpt_path)
 
     mlflow.set_experiment(experiment_name)
     mlflow.pytorch.autolog()

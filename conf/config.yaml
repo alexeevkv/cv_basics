@@ -1,11 +1,13 @@
-DEVICE: cuda
+DEVICE: cpu
+DEVICE_NUM: 0 # takes affect only if GPU_NUM is 1
 GPU_NUM: 1
-MODEL: ResNet50
 EXPERIMENT_NAME: GrokkingEffect
 RUN_NAME: ResNet50_no_augm
+CKPT_PATH: null
 
 defaults:
   - dataset: cifar10
+  - model: vit
   - transforms: resize_to_tensor
   - augmentations: null
   - criterion: cross_entropy

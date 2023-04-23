@@ -6,11 +6,12 @@ from sklearn.model_selection import train_test_split
 
 
 class CifarDataset(Dataset):
-    def __init__(self, images, targets, augm=None, transform=None):
+    def __init__(self, images, targets, transform=None, augm=None, idx2class_mapping=None):
         self.images = images
         self.targets = targets
         self.augm = augm
         self.transform = transform
+        self.idx2class_mapping = idx2class_mapping
 
     def __getitem__(self, index):
         image = self.images[index]
@@ -29,11 +30,11 @@ class CifarDataset(Dataset):
         return len(self.images)
 
 
-def load_cifar_data(download=False):
-    train_data = CIFAR10(root="./data/CIFAR10", train=True, download=download)
-    test_data = CIFAR10(root="./data/CIFAR10", train=False, download=download)
+def load_cifar_data(root='./data/CIFAR10', download=False):
+    train_data = CIFAR10(root=root, train=True, download=download)
+    test_data = CIFAR10(root=root, train=False, download=download)
 
-    return train_data, test_data
+    return train_data, test_data, train_data.class_to_idx
 
 
 def data_split(
@@ -45,11 +46,13 @@ def data_split(
     train_augm=None,
     test_augm=None,
     val_size=0.2, 
-    download=True, 
+    download=True,
+    root='./data/CIFAR10',
     random_state=42,
     num_workers=4
 ):
-    train_data, test_data = load_cifar_data(download=download)
+    train_data, test_data, classes2idx = load_cifar_data(root, download=download)
+    idx2classes = {v: k for (k, v) in classes2idx.items()}
     
     train_images = [data[0] for data in train_data]
     train_targets = [data[1] for data in train_data]
@@ -66,20 +69,14 @@ def data_split(
         )
 
     # train, val
-    train_dataset = CifarDataset(train_images, train_targets, transform=train_transforms, augm=train_augm)
-    val_dataset = CifarDataset(val_images, val_targets, transform=test_transforms, augm=test_augm)
+    train_dataset = CifarDataset(train_images, train_targets, train_transforms, train_augm, idx2classes)
+    val_dataset = CifarDataset(val_images, val_targets, test_transforms, test_augm, idx2classes)
 
     train_loader = DataLoader(train_dataset, batch_size=train_batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_dataset, batch_size=val_batch_size, shuffle=False, num_workers=num_workers)
 
     # test 
-    test_dataset = CifarDataset(test_images, test_targets, transform=test_transforms, augm=test_augm)
+    test_dataset = CifarDataset(test_images, test_targets, test_transforms, test_augm, idx2classes)
     test_loader = DataLoader(test_dataset, batch_size=test_batch_size, shuffle=False, num_workers=num_workers)
-
-    # datasets = {
-    #     'train': train_dataset,
-    #     'val': val_dataset,
-    #     'test': test_dataset
-    # } 
 
     return train_loader, val_loader, test_loader
