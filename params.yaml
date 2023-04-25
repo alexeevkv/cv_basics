@@ -1,7 +1,7 @@
 dataset:
-  train_batch_size: 128
-  val_batch_size: 256
-  test_batch_size: 500
+  train_batch_size: 256
+  val_batch_size: 512
+  test_batch_size: 1000
   train_transforms:
     _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   test_transforms:
@@ -14,17 +14,8 @@ dataset:
   num_workers: 32
 model:
   net:
-    _target_: src.collections.models.vit.VisionTransformer
+    _target_: src.collections.models.resnet.ResNet50
     _partial_: false
-    embed_dim: 256
-    hidden_dim: 512
-    num_heads: 8
-    num_layers: 6
-    patch_size: 4
-    num_channels: 3
-    num_patches: 64
-    num_classes: 10
-    dropout: 0.2
 transforms:
   train:
     _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
@@ -58,15 +49,17 @@ metrics:
     average: weighted
 trainer:
   trainer_kwargs:
-    accelerator: cpu
+    accelerator: cuda
     devices: 1
-    min_epochs: 1000
-    max_epochs: 1100
+    min_epochs: 2000
+    max_epochs: 2001
     check_val_every_n_epoch: 1
     enable_model_summary: true
-DEVICE: cpu
-DEVICE_NUM: 0
+    gradient_clip_val: null
+    gradient_clip_algorithm: null
+DEVICE: cuda
+DEVICE_NUM: 1
 GPU_NUM: 1
 EXPERIMENT_NAME: GrokkingEffect
-RUN_NAME: ResNet50_no_augm
-CKPT_PATH: null
+RUN_NAME: ResNet50_no_augm_4
+CKPT_PATH: lightning_logs/version_2/checkpoints/epoch=1099-step=366300.ckpt

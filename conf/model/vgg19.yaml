@@ -1,0 +1,3 @@
+net:
+  _target_: src.collections.models.vgg.VGG19
+  _partial_: False

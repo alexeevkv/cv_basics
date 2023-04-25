@@ -3,7 +3,7 @@ stages:
     cmd: python main.py --params params.yaml
                         --model_outpath models/${EXPERIMENT_NAME}.pt
                         --experiment_name ${EXPERIMENT_NAME}
-                        --run_name ${RUN_NAME}_3
+                        --run_name ${RUN_NAME}
     deps:
       - params.yaml
       - main.py

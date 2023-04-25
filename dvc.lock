@@ -1,12 +1,12 @@
 schema: '2.0'
 stages:
   run_experiment:
-    cmd: python main.py --params params.yaml --model_outpath models/GrokkingEffect.pt
-      --experiment_name GrokkingEffect --run_name ResNet50_no_augm_3 --ckpt_path lightning_logs/version_1/checkpoints/epoch=1046-step=348651.ckpt
+    cmd: python main.py --params params.yaml --model_outpath models/VGG.pt --experiment_name
+      VGG --run_name VGG19_default_trans_grad_clipping_3
     deps:
     - path: main.py
-      md5: d646a2316fa8f83c88e1577465ea2386
-      size: 3498
+      md5: b2a518ddb089f388173bff773d31d9fd
+      size: 3192
     - path: params.yaml
-      md5: 737e8d62cdb412055f5716d44b438938
-      size: 1443
+      md5: 67ce79b7874650f091824ae789a2eb97
+      size: 1602
