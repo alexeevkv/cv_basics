@@ -5,7 +5,8 @@ python main.py \
     --params params.yaml \
     --model_outpath model.pt \
     --experiment_name debug \
-    --run_name test_run
+    --run_name test_run \
+    --description description
 '''
 from pathlib import Path
 
@@ -27,12 +28,18 @@ from src.io import load_yaml
 @click.option('--model_outpath', 'model_outpath')
 @click.option('--experiment_name', 'experiment_name')
 @click.option('--run_name', 'run_name')
-def train_model(
+@click.option('--description', 'description', required=False, default=None)
+def main(
     params: Path,
     model_outpath: Path,
     experiment_name: str,
     run_name: str,
+    description: str = None,
 ) -> None:
+    """
+    TODO Добавить нормальную доку
+
+    """
     raw_conf = load_yaml(params)
     net_conf = prepare_config(params, config_key='model', resolve=True)
     trainer_conf = prepare_config(params, config_key='trainer', resolve=True)
@@ -61,7 +68,7 @@ def train_model(
 
     mlflow.set_experiment(experiment_name)
     mlflow.pytorch.autolog()
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run(run_name=run_name, description=description):
         trainer.fit(pl_net, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
         trainer.test(pl_net, test_dataloader)
 
@@ -84,4 +91,4 @@ def train_model(
 
 
 if __name__ == '__main__':
-    train_model()
+    main()

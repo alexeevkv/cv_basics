@@ -52,3 +52,20 @@ def get_tsne(data, n_components=2, n_images=None):
     tsne = manifold.TSNE(n_components=n_components, random_state=0)
     tsne_data = tsne.fit_transform(data)
     return tsne_data
+
+
+def vis_batch(x, y=None, idx2class: dict = None):
+    """
+    Inputs:
+    x - Tensor representening the batch of images with shape [B, C, H, W]
+    """
+    batch_size = x.shape[0]
+    fig, ax = plt.subplots(nrows=1, ncols=batch_size, figsize=(12, 12))
+
+    for idx, image in enumerate(x):
+        ax[idx].imshow(to_np(image).transpose(1, 2, 0))
+        ax[idx].axis("off")
+        if y is not None:
+            title = idx2class[int(y[idx])] if idx2class is not None else int(y[idx])
+            ax[idx].set_title(title)
+    plt.show()

@@ -1,9 +1,12 @@
 stages: 
   run_experiment:
     cmd: python main.py --params params.yaml
-                        --model_outpath models/${EXPERIMENT_NAME}.pt
+                        --model_outpath outputs/models/${EXPERIMENT_NAME}_${RUN_NAME}.pt
                         --experiment_name ${EXPERIMENT_NAME}
                         --run_name ${RUN_NAME}
+                        --description ${DESCRIPTION}
     deps:
       - params.yaml
       - main.py
+    outs:
+      - outputs/models/${EXPERIMENT_NAME}_${RUN_NAME}.pt

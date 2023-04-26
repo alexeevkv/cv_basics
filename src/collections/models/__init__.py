@@ -12,3 +12,4 @@ from .vgg import (
     VGG19,
 )
 from .vit import VisionTransformer
+from .swin import SwinTransformer

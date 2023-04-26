@@ -3,15 +3,16 @@ DEVICE_NUM: 1 # takes affect only if GPU_NUM is 1
 GPU_NUM: 1
 EXPERIMENT_NAME: GrokkingEffect
 RUN_NAME: ResNet50_no_augm_4
-CKPT_PATH: lightning_logs/version_2/checkpoints/epoch=1099-step=366300.ckpt
+DESCRIPTION: null
+CKPT_PATH: null
 
 defaults:
   - dataset: cifar10
   - model: resnet50
-  - transforms: resize_to_tensor
+  - transforms: default_trans
   - augmentations: null
   - criterion: cross_entropy
-  - optimizer: adam
+  - optimizer: adam_w
   - scheduler: reduce_on_plateu
   - metrics: classification
   - trainer: train

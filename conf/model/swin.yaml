@@ -1,0 +1,19 @@
+net:
+  _target_: src.collections.models.swin.SwinTransformer
+  _partial_: false
+  classes: 10
+  image_size: 32 
+  num_blocks_list:
+    - 4
+    - 4
+  dims:
+    - 128
+    - 128 
+    - 256
+  head_dim: 32
+  patch_size: 2
+  window_size: 4             
+  in_channels: 3 
+  emb_p_drop: 0
+  trans_p_drop: 0 
+  head_p_drop: 0.3
