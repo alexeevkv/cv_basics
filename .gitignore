@@ -9,9 +9,6 @@ venv
 .ipynb_checkpoints
 __pycache__
 
-# models
-saved_models/
-
 # mlflow
 mlruns
 
