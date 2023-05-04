@@ -13,7 +13,7 @@ from pathlib import Path
 import click
 import mlflow
 
-from src.torch.utils import save_model_state, select_device
+from src.torch.utils import save_model_state, select_device, get_model, get_criterion, get_optimizer, get_scheduler
 from src.torch.dataset import get_dataloaders
 from src.torch.eval import get_predicts
 from src.config import prepare_config
@@ -49,14 +49,14 @@ def main(
     scheduler_conf = prepare_config(params, config_key='scheduler', resolve=True)
     metrics_conf = prepare_config(params, config_key='metrics', resolve=True)
 
-    device = select_device(raw_conf)  # sets specific gpu if more than 1 is available
     ckpt_path = raw_conf['CKPT_PATH']
-    net = net_conf['net'].to(device)
+    device = select_device(raw_conf)  # sets specific gpu if more than 1 is available
+    net = get_model(net_conf, device)
+    criterion = get_criterion(criterion_conf)
+    optimizer = get_optimizer(optimizer_conf, net)
+    scheduler = get_scheduler(scheduler_conf, optimizer)
     trainer = get_trainer(trainer_conf['trainer_kwargs'], ckpt_path=ckpt_path)
     train_dataloader, val_dataloader, test_dataloader = get_dataloaders(**dataset_conf)
-    optimizer = optimizer_conf['optimizer'](net.parameters())
-    criterion = criterion_conf['criterion']
-    scheduler = scheduler_conf['scheduler'](optimizer)
 
     pl_net = PLModelWrapper(
         model=net, 
@@ -72,7 +72,7 @@ def main(
         trainer.fit(pl_net, train_dataloaders=train_dataloader, val_dataloaders=val_dataloader)
         trainer.test(pl_net, test_dataloader)
 
-        net = pl_net.retrieve_torch_model().to(device)
+        net = pl_net.retrieve_torch_model(device)
         save_model_state(net, model_outpath)
 
         y_true, y_pred = get_predicts(net, test_dataloader)

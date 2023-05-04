@@ -106,6 +106,9 @@ class PLModelWrapper(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = self.optimizer
 
+        if self.lr_scheduler is None:
+            return [optimizer]
+
         lr_scheduler = {
             'scheduler': self.lr_scheduler,
             'monitor': 'loss/val'
@@ -113,8 +116,8 @@ class PLModelWrapper(pl.LightningModule):
         
         return [optimizer], [lr_scheduler]
     
-    def retrieve_torch_model(self):
-        return self.model
+    def retrieve_torch_model(self, device):
+        return self.model.to(device)
 
 
 def get_trainer(trainer_kwargs, ckpt_path=None):

@@ -13,6 +13,6 @@ defaults:
   - augmentations: null
   - criterion: cross_entropy
   - optimizer: adam_w
-  - scheduler: reduce_on_plateu
+  - scheduler: null
   - metrics: classification
   - trainer: train

@@ -119,6 +119,9 @@ def prepare_config(config: Union[dict, DictConfig, str, pathlib.Path],
 
     config = OmegaConf.to_object(config)
 
+    if config_key not in config.keys():
+        return None 
+    
     if resolve:
         return resolve_config(config)
 

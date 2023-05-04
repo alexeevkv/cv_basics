@@ -3,9 +3,9 @@ dataset:
   val_batch_size: 512
   test_batch_size: 1000
   train_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
+    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
   test_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
+    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
   train_augm: null
   test_augm: null
   val_size: 0.15
@@ -18,23 +18,18 @@ model:
     _partial_: false
 transforms:
   train:
-    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
+    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
   val:
-    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
+    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
 criterion:
   criterion:
     _target_: torch.nn.CrossEntropyLoss
 optimizer:
   optimizer:
-    _target_: torch.optim.Adam
+    _target_: torch.optim.AdamW
     _partial_: true
     lr: 0.0002
-scheduler:
-  scheduler:
-    _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
-    _partial_: true
-    min_lr: 1.0e-05
-    verbose: false
+    weight_decay: 0.01
 metrics:
   accuracy_score:
     _target_: sklearn.metrics.accuracy_score
@@ -62,4 +57,5 @@ DEVICE_NUM: 1
 GPU_NUM: 1
 EXPERIMENT_NAME: GrokkingEffect
 RUN_NAME: ResNet50_no_augm_4
-CKPT_PATH: lightning_logs/version_2/checkpoints/epoch=1099-step=366300.ckpt
+DESCRIPTION: null
+CKPT_PATH: null

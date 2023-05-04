@@ -54,3 +54,4 @@
 4. Подумать имеет ли смысл использовать dvc или хватит просто hydra.
 5. Если оставить dvc, то подумать над тем, что следует добавить в outs/metrics/plots
 6. Перейти с pytorch_lightning==1.9 на pytorch_lightning>=2.0
+7. Вернуть аугментации как было (описывать Compose в конфиге), а не в src.collections.transforms/...
