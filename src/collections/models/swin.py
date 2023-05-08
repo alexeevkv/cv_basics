@@ -55,7 +55,8 @@ class ShiftedWindowAttention(nn.Module):
         if shift_size > 0:
             att = self.mask_attention(att)
         
-        att = F.softmax(att, dim=-1)
+        softmax = nn.Softmax(dim=-1)
+        att = softmax(att)
         
         x = att @ values
         x = x.transpose(1, 2).contiguous().flatten(-2, -1)  # move head back
@@ -171,7 +172,8 @@ class PatchMerging(nn.Module):
     
     def forward(self, x):
         x = x.unflatten(1, self.shape).movedim(-1, 1)
-        x = F.unfold(x, kernel_size=2, stride=2).movedim(1, -1)
+        unfold = nn.Unfold(kernel_size=2, stride=2)
+        x = unfold(x).movedim(1, -1)
         
         x = self.norm(x)
         x = self.reduction(x)
@@ -215,7 +217,8 @@ class ToPatches(nn.Module):
         self.norm = nn.LayerNorm(dim)
     
     def forward(self, x):
-        x = F.unfold(x, kernel_size=self.patch_size, stride=self.patch_size).movedim(1, -1)
+        unfold = nn.Unfold(kernel_size=self.patch_size, stride=self.patch_size)
+        x = unfold(x).movedim(1, -1)
         x = self.proj(x)
         x = self.norm(x)
         return x
