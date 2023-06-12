@@ -3,9 +3,9 @@ dataset:
   val_batch_size: 512
   test_batch_size: 1000
   train_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   test_transforms:
-    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   train_augm: null
   test_augm: null
   val_size: 0.15
@@ -14,13 +14,29 @@ dataset:
   num_workers: 32
 model:
   net:
-    _target_: src.collections.models.resnet.ResNet50
+    _target_: src.collections.models.swin.SwinTransformer
     _partial_: false
+    classes: 10
+    image_size: 32
+    num_blocks_list:
+    - 4
+    - 4
+    dims:
+    - 128
+    - 128
+    - 256
+    head_dim: 32
+    patch_size: 2
+    window_size: 4
+    in_channels: 3
+    emb_p_drop: 0
+    trans_p_drop: 0
+    head_p_drop: 0.3
 transforms:
   train:
-    _target_: src.collections.augmentations.torch_transforms.get_train_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
   val:
-    _target_: src.collections.augmentations.torch_transforms.get_val_transforms
+    _target_: src.collections.augmentations.torch_transforms.get_resize_to_tensor
 criterion:
   criterion:
     _target_: torch.nn.CrossEntropyLoss
@@ -44,10 +60,11 @@ metrics:
     average: weighted
 trainer:
   trainer_kwargs:
+    default_root_dir: lightning_logs/Transformers/SWIN_500_1000
     accelerator: cuda
     devices: 1
-    min_epochs: 2000
-    max_epochs: 2001
+    min_epochs: 1500
+    max_epochs: 1500
     check_val_every_n_epoch: 1
     enable_model_summary: true
     gradient_clip_val: null
@@ -55,7 +72,7 @@ trainer:
 DEVICE: cuda
 DEVICE_NUM: 1
 GPU_NUM: 1
-EXPERIMENT_NAME: GrokkingEffect
-RUN_NAME: ResNet50_no_augm_4
+EXPERIMENT_NAME: Transformers
+RUN_NAME: SWIN_500_1000
 DESCRIPTION: null
-CKPT_PATH: null
+CKPT_PATH: Transformers/SWIN_500_1000/lightning_logs/version_1/checkpoints/epoch=999-step=167000.ckpt

@@ -3,11 +3,11 @@
 # Рекомендуется подробно изучить и взять всё что необходимо для ваших задач.
 
 trainer_kwargs:
-  default_root_dir: ${EXPERIMENT_NAME}/${RUN_NAME}
+  default_root_dir: lightning_logs/${EXPERIMENT_NAME}/${RUN_NAME}
   accelerator: ${DEVICE}
   devices: ${GPU_NUM}
-  min_epochs: 2000
-  max_epochs: 2001
+  min_epochs: 1500
+  max_epochs: 1500
   check_val_every_n_epoch: 1
   enable_model_summary: True
   gradient_clip_val: null

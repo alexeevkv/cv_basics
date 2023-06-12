@@ -110,6 +110,9 @@ def prepare_config(config: Union[dict, DictConfig, str, pathlib.Path],
         config = OmegaConf.load(config)
     else:
         raise Exception(f'Path `{config}` does not exist')
+    
+    if config_key not in config.keys():
+        return None 
 
     if isinstance(config, omegaconf.dictconfig.DictConfig):
         for key in key_path:
@@ -118,9 +121,6 @@ def prepare_config(config: Union[dict, DictConfig, str, pathlib.Path],
         raise Exception(f'Unknown type of config `{type(config)}`')
 
     config = OmegaConf.to_object(config)
-
-    if config_key not in config.keys():
-        return None 
     
     if resolve:
         return resolve_config(config)

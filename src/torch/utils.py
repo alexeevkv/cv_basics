@@ -91,5 +91,5 @@ def get_optimizer(optimizer_conf, net) -> torch.optim.Optimizer:
     return optimizer_conf['optimizer'](net.parameters())
 
 
-def get_criterion(criterion_conf) -> nn._Loss:
+def get_criterion(criterion_conf) -> torch.nn.Module:
     return criterion_conf['criterion']

@@ -1,15 +1,15 @@
 DEVICE: cuda
 DEVICE_NUM: 1 # takes affect only if GPU_NUM is 1
 GPU_NUM: 1
-EXPERIMENT_NAME: GrokkingEffect
-RUN_NAME: ResNet50_no_augm_4
+EXPERIMENT_NAME: Transformers
+RUN_NAME: SWIN_500_1000
 DESCRIPTION: null
-CKPT_PATH: null
+CKPT_PATH: Transformers/SWIN_500_1000/lightning_logs/version_1/checkpoints/epoch=999-step=167000.ckpt
 
 defaults:
   - dataset: cifar10
-  - model: resnet50
-  - transforms: default_trans
+  - model: swin
+  - transforms: resize_to_tensor
   - augmentations: null
   - criterion: cross_entropy
   - optimizer: adam_w
